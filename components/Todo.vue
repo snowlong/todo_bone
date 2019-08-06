@@ -4,7 +4,7 @@
       <input
         v-model="newItemTitle"
         type="text"
-        placeholder="TODOを入力しましょう！"
+        placeholder="TODOを入力しましょう！!"
         @keyup.enter="addTodo"
       />
     </p>
