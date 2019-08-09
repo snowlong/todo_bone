@@ -10,11 +10,13 @@
     </p>
     <ul>
       <li v-for="item in items" :key="item.id">
-        <label>
-          <input v-model="item.isChecked" type="checkbox" /> {{ item.title }}
+        <label :class="{ done: item.isChecked }">
+          <input v-if="item" v-model="item.isChecked" type="checkbox" />
+          {{ item.title }}
         </label>
       </li>
     </ul>
+    <button @click="deleteTodo()">チェック済みの項目を削除する</button>
   </div>
 </template>
 
@@ -34,8 +36,11 @@ export default {
       if (!this.newItemTitle) {
         return
       }
+      const date = new Date()
+      const now = date.getTime()
 
       this.items.push({
+        id: now,
         title: this.newItemTitle,
         isChecked: false
       })
@@ -44,6 +49,12 @@ export default {
     },
     saveTodo() {
       localStorage.setItem('items', JSON.stringify(this.items))
+    },
+    deleteTodo() {
+      this.items = this.items.filter(function(item) {
+        return item.isChecked === false //
+      })
+      this.saveTodo()
     },
     loadTodo() {
       this.items = JSON.parse(localStorage.getItem('items'))
@@ -55,4 +66,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.done {
+  text-decoration: line-through;
+}
+</style>
