@@ -8,14 +8,14 @@
         @keyup.enter="addTodo"
       />
     </p>
-    <ul>
-      <li v-for="item in items" :key="item.id">
+    <transition-group name="list-complete" tag="ul">
+      <li v-for="item in items" :key="item.id" class="list-complete-item">
         <label :class="{ done: item.isChecked }">
           <input v-if="item" v-model="item.isChecked" type="checkbox" />
           {{ item.title }}
         </label>
       </li>
-    </ul>
+    </transition-group>
     <button @click="deleteTodo()">チェック済みの項目を削除する</button>
   </div>
 </template>
@@ -69,5 +69,16 @@ export default {
 <style>
 .done {
   text-decoration: line-through;
+}
+.list-complete-item {
+  transition: all 1s;
+}
+.list-complete-enter,
+.list-complete-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.list-complete-leave-active {
+  position: absolute;
 }
 </style>
