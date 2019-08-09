@@ -1,5 +1,11 @@
 export default {
   mode: 'universal',
+  vue: {
+    config: {
+      productionTip: false,
+      devtools: true
+    }
+  },
   /*
    ** Headers of the page
    */
