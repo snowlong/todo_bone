@@ -11,12 +11,19 @@
     <transition-group name="list-complete" tag="ul">
       <li v-for="item in items" :key="item.id" class="list-complete-item">
         <label :class="{ done: item.isChecked }">
-          <input v-if="item" v-model="item.isChecked" type="checkbox" />
+          <input
+            v-if="item"
+            v-model="item.isChecked"
+            type="checkbox"
+            @change="updateCheckedCount"
+          />
           {{ item.title }}
         </label>
       </li>
     </transition-group>
-    <button @click="deleteTodo()">チェック済みの項目を削除する</button>
+    <button :disabled="!checkedCount" @click="deleteTodo()">
+      チェック済みの項目を削除する
+    </button>
   </div>
 </template>
 
@@ -24,6 +31,7 @@
 export default {
   data() {
     return {
+      checkedCount: 0,
       newItemTitle: '',
       items: []
     }
@@ -52,7 +60,7 @@ export default {
     },
     deleteTodo() {
       this.items = this.items.filter(function(item) {
-        return item.isChecked === false //
+        return item.isChecked === false
       })
       this.saveTodo()
     },
@@ -61,6 +69,12 @@ export default {
       if (!this.items) {
         this.items = []
       }
+    },
+    updateCheckedCount() {
+      const checked = this.items.filter(function(item) {
+        return item.isChecked === true
+      })
+      this.checkedCount = checked.length
     }
   }
 }
