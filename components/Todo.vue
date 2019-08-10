@@ -6,6 +6,7 @@
         type="text"
         placeholder="TODOを入力しましょう！!"
         @keyup.enter="addTodo"
+        @keypress="confirmMessage"
       />
     </p>
     <transition-group name="list-complete" tag="ul">
@@ -31,6 +32,7 @@
 export default {
   data() {
     return {
+      isItemConfirmed: false,
       checkedCount: 0,
       newItemTitle: '',
       items: []
@@ -45,6 +47,9 @@ export default {
       if (!this.newItemTitle) {
         return
       }
+      if (!this.isItemConfirmed) {
+        return
+      }
       const date = new Date()
       const now = date.getTime()
 
@@ -54,6 +59,8 @@ export default {
         isChecked: false
       })
       this.newItemTitle = ''
+      this.isItemConfirmed = false
+
       this.saveTodo()
     },
     saveTodo() {
@@ -76,12 +83,22 @@ export default {
         return item.isChecked === true
       })
       this.checkedCount = checked.length
+    },
+    confirmMessage() {
+      this.isItemConfirmed = true
     }
   }
 }
 </script>
 
 <style>
+ul {
+  margin: 0;
+  padding: 0;
+}
+li {
+  list-style: none;
+}
 .done {
   text-decoration: line-through;
 }
