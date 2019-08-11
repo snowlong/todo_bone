@@ -10,8 +10,12 @@
       />
     </p>
     <transition-group name="list-complete" tag="ul">
-      <li v-for="item in items" :key="item.id" class="list-complete-item">
-        <label :class="{ done: item.isChecked }">
+      <li
+        v-for="(item, index) in items"
+        :key="item.id"
+        class="list-complete-item"
+      >
+        <label :class="{ done: item.isChecked, hide: item.isEditing }">
           <input
             v-if="item"
             v-model="item.isChecked"
@@ -20,6 +24,22 @@
           />
           {{ item.title }}
         </label>
+        <label :class="{ hide: !item.isEditing }">
+          <input
+            id=""
+            v-model="item.title"
+            type="text"
+            name=""
+            @keyup.enter="editTodo(index)"
+            @keypress="confirmMessage"
+          />
+        </label>
+        <div class="edit-button-box" :class="{ hide: item.isEditing }">
+          <button :disabled="isItemEditing" @click="showEditMode(index)">
+            編集
+          </button>
+          <button :disabled="isItemEditing">削除</button>
+        </div>
       </li>
     </transition-group>
     <button :disabled="!checkedCount" @click="deleteTodo()">
@@ -33,6 +53,7 @@ export default {
   data() {
     return {
       isItemConfirmed: false,
+      isItemEditing: false,
       checkedCount: 0,
       newItemTitle: '',
       items: []
@@ -56,7 +77,8 @@ export default {
       this.items.push({
         id: now,
         title: this.newItemTitle,
-        isChecked: false
+        isChecked: false,
+        isEditing: false
       })
       this.newItemTitle = ''
       this.isItemConfirmed = false
@@ -65,6 +87,23 @@ export default {
     },
     saveTodo() {
       localStorage.setItem('items', JSON.stringify(this.items))
+    },
+    showEditMode(_index) {
+      console.log(_index)
+      if (this.isItemEditing) {
+        return
+      }
+      this.items[_index].isEditing = true
+      this.isItemEditing = true
+      this.isItemConfirmed = false
+    },
+    editTodo(_index) {
+      if (!this.isItemConfirmed) {
+        return
+      }
+      this.items[_index].isEditing = false
+      this.isItemEditing = false
+      this.saveTodo()
     },
     deleteTodo() {
       this.items = this.items.filter(function(item) {
@@ -102,6 +141,9 @@ li {
 .done {
   text-decoration: line-through;
 }
+.hide {
+  display: none !important;
+}
 .list-complete-item {
   transition: all 1s;
 }
@@ -112,5 +154,8 @@ li {
 }
 .list-complete-leave-active {
   position: absolute;
+}
+.edit-button-box {
+  display: inline-block;
 }
 </style>
